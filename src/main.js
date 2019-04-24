@@ -3,6 +3,7 @@ import './plugins/vuetify';
 import App from './App.vue';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import 'typeface-roboto/index.css';
+import './main.css';
 
 Vue.config.productionTip = false;
 
