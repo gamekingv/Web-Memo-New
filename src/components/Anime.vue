@@ -1,5 +1,5 @@
 <template>
-    <v-card :width="300" class="mt-3 mx-3 d-inline-block" color="rgb(48, 48, 48)" flat>
+    <v-card :width="300" class="ma-3" color="rgb(48, 48, 48)" flat>
         <v-toolbar :color="isToday ? 'teal' : 'grey darken-2'" dark flat>
             <v-toolbar-title>{{dateText[day - 1]}}</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -32,10 +32,10 @@
                         </v-fade-transition>
                     </v-list-tile-action>
                 </v-list-tile>
-                <div class="no-note no-drag" slot="blank-text">今天没有追番</div>
+                <div slot="blank-text">今天没有追番</div>
             </drag-list>
         </v-list>
-        <v-dialog max-width="600px" persistent scrollable v-model="dialog">
+        <v-dialog lazy max-width="600px" persistent scrollable v-model="dialog">
             <v-card>
                 <v-card-title>
                     <span class="headline">编辑</span>
