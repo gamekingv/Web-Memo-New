@@ -3,13 +3,13 @@
         <v-toolbar color="blue" dark flat>
             <v-toolbar-title>{{headerText[type]}}</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn @click="dialog = !dialog" icon>
+            <v-btn @click="dialog = true" icon>
                 <v-icon>add</v-icon>
             </v-btn>
         </v-toolbar>
         <v-list two-line>
-            <drag-list :changeHandler="saveList" :list="items" :options="options">
-                <v-list-tile @click avatar slot-scope="{ hover, item }">
+            <drag-list :changeHandler="saveList" :list="items" group="memo">
+                <v-list-tile @click.stop avatar slot-scope="{ hover, item }">
                     <v-list-tile-content>
                         <v-list-tile-title>{{ item.field1 }}</v-list-tile-title>
                         <v-list-tile-sub-title>{{ item.field2 }}</v-list-tile-sub-title>
@@ -18,7 +18,7 @@
                     <v-list-tile-action>
                         <v-fade-transition>
                             <div v-show="hover">
-                                <v-btn @click.stop class="ma-0 no-drag" icon small>
+                                <v-btn @click.stop="editItem(item)" class="ma-0 no-drag" icon small>
                                     <v-icon small>edit</v-icon>
                                 </v-btn>
                             </div>
@@ -36,13 +36,13 @@
                 <v-card-text>
                     <v-container class="py-0" grid-list-md>
                         <v-layout wrap>
-                            <v-flex lg12>
+                            <v-flex xs12>
                                 <v-text-field label="字段1" v-model="edit.field1"></v-text-field>
                             </v-flex>
-                            <v-flex lg12>
+                            <v-flex xs12>
                                 <v-text-field label="字段2" v-model="edit.field2"></v-text-field>
                             </v-flex>
-                            <v-flex lg12>
+                            <v-flex xs12>
                                 <p style="color:rgba(255,255,255,0.7)">时间</p>
                                 <v-date-picker color="blue" v-model="edit.time"></v-date-picker>
                             </v-flex>
@@ -51,18 +51,30 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn @click="dialog = false" color="blue" flat>取消</v-btn>
-                    <v-btn @click="saveEdit" color="blue" flat>保存</v-btn>
+                    <v-btn @click="deleteItem()" color="error" flat v-if="editing">删除</v-btn>
+                    <v-btn @click="dialog = false; resetForm()" color="secondary">取消</v-btn>
+                    <v-btn @click="saveEdit" color="blue">保存</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
     </v-card>
 </template>
 <script>
-import dragList from './DragList.vue';
+import dragList from './DragList';
+import storage from '../utils/storage';
 
 export default {
     name: 'Memo',
+    props: {
+        type: String
+    },
+    components: {
+        dragList
+    },
+    created() {
+        let { [`day${this.day}`]: items } = storage.get(`day${this.day}`);
+        if (items) this.items = items;
+    },
     data: () => ({
         headerText: {
             song: '歌曲',
@@ -71,46 +83,56 @@ export default {
             game: '游戏'
         },
         dialog: false,
-        options: {
-            group: 'memo',
-            animation: 100,
-            filter: '.no-drag'
-        },
+        editing: false,
         edit: {
             field1: '',
             field2: '',
             time: '',
             id: 0
         },
-        items: [
-            {
-                field1: '盾之勇者成名录',
-                field2: 'bilibili',
-                time: '2019-04-04',
-                id: 1
-            },
-            {
-                field1: '盾之勇者成名录',
-                field2: 'bilibili',
-                time: '2019-04-04',
-                id: 2
-            }],
+        items: [],
     }),
-    components: {
-        dragList
-    },
-    props: {
-        type: String
-    },
     methods: {
-        saveEdit() {
-            console.log(JSON.stringify(this.edit));
+        editItem(item) {
+            this.editing = true;
+            this.dialog = true;
+            this.resetForm();
+            for (let key in item)
+                this.edit[key] = item[key];
         },
-        saveList(e) {
-            console.log(JSON.stringify(e));
+        saveEdit() {
+            this.dialog = false;
+            if (this.editing) {
+                let note = this.items[this.items.findIndex(n => n.id == this.edit.id)];
+                for (let noteItem in this.edit)
+                    note[noteItem] = this.edit[noteItem];
+            }
+            else {
+                this.edit.id = Date.now();
+                this.items.push({ ...this.edit });
+            }
+            this.resetForm();
+            this.editing = false;
+            this.saveList();
+        },
+        deleteItem() {
+            this.dialog = false;
+            this.items.splice(this.items.findIndex(n => n.id == this.edit.id), 1);
+            this.resetForm();
+            this.editing = false;
+            this.saveList();
+        },
+        resetForm() {
+            this.edit = {
+                field1: '',
+                field2: '',
+                time: '',
+                id: 0
+            };
+        },
+        saveList() {
+            storage.set(this.type, this.items);
         }
-    },
-    created() {
     }
 };
 </script>

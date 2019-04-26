@@ -1,11 +1,11 @@
 <template>
     <v-app dark>
-        <v-tabs color="grey darken-4" fixed-tabs slider-color="blue" v-model="model">
+        <v-tabs color="grey darken-4" fixed-tabs slider-color="blue" v-model="tab">
             <v-tab key="anime" ripple>新番</v-tab>
             <v-tab key="memo" ripple>备忘</v-tab>
             <v-tab key="option" ripple>选项</v-tab>
         </v-tabs>
-        <v-tabs-items class="tab-items-row" v-model="model">
+        <v-tabs-items class="tab-items-row" v-model="tab">
             <v-tab-item key="anime">
                 <v-layout align-content-start justify-center wrap>
                     <anime :day="n" :key="n" v-for="n in 7"/>
@@ -20,9 +20,7 @@
                 </v-layout>
             </v-tab-item>
             <v-tab-item key="option">
-                <v-layout align-content-start justify-center wrap>
-                    <anime :day="n" :key="n" v-for="n in 7"/>
-                </v-layout>
+                <settings :last="last" :synchronizing="synchronizing" @autoSync="autoSync" @stopSync="stopSync" @synchronize="synchronize"/>
             </v-tab-item>
         </v-tabs-items>
     </v-app>
@@ -31,17 +29,48 @@
 <script>
 import Anime from './components/Anime';
 import Memo from './components/Memo';
+import Settings from './components/Settings';
+import storage from './utils/storage';
+import sync from './utils/sync';
 
 export default {
     name: 'App',
     components: {
         Anime,
-        Memo
+        Memo,
+        Settings
     },
-    data() {
-        return {
-            model: 0
-        };
+    async created() {
+        await this.updateLast();
+        sync.init(this);
+    },
+    data: () => ({
+        tab: 0,
+        last: {
+            time: -1,
+            successTime: -1,
+            success: false,
+            message: ''
+        },
+        synchronizing: false
+    }),
+    methods: {
+        async synchronize(isForced = false) {
+            this.synchronizing = true;
+            await sync.synchronize(isForced);
+            await this.updateLast();
+            this.synchronizing = false;
+        },
+        async updateLast() {
+            let { last } = await storage.get('last');
+            if (last) this.last = last;
+        },
+        async autoSync() {
+            await sync.autoSync();
+        },
+        stopSync() {
+            sync.stopSync();
+        }
     }
 };
 </script>

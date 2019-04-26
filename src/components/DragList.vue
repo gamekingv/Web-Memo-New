@@ -1,12 +1,12 @@
 <template>
-    <drag-item :list="list" :options="options" @change="changeHandler">
+    <drag-item :animation="100" :group="group" :list="list" @change="changeHandler" filter=".no-drag">
         <div :key="item.id" v-for="(item, index) in list">
             <v-hover>
                 <slot :hover="hover" :item="item" slot-scope="{hover}"/>
             </v-hover>
             <v-divider :key="index" v-if="index + 1 < list.length"></v-divider>
         </div>
-        <div class="ma-3 no-drag" style="text-align:center;color:rgba(255,255,255,0.7)" v-if="list.length === 0">
+        <div class="ma-3 no-drag blank-panel" style="text-align:center;color:rgba(255,255,255,0.7)">
             <slot name="blank-text"></slot>
         </div>
     </drag-item>
@@ -20,21 +20,23 @@ export default {
         dragItem
     },
     props: {
-        options: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
         list: {
             type: Array,
             default() {
                 return [];
             }
         },
-        changeHandler: {
-            type: Function
-        }
+        changeHandler: Function,
+        group: String
     }
 };
 </script>
+
+<style scoped>
+.blank-panel {
+    display: none;
+}
+.blank-panel:only-child {
+    display: unset;
+}
+</style>
