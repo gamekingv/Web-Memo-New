@@ -81,7 +81,7 @@
                                     <template v-slot:activator="{ on }">
                                         <v-text-field clearable label="放送时间" prepend-icon="access_time" readonly v-model="edit.time" v-on="on"></v-text-field>
                                     </template>
-                                    <v-time-picker full-width v-if="timePicker" v-model="edit.time"></v-time-picker>
+                                    <v-time-picker format="24hr" full-width v-if="timePicker" v-model="edit.time"></v-time-picker>
                                 </v-menu>
                             </v-flex>
                         </v-layout>
