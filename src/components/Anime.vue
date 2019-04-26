@@ -68,7 +68,22 @@
                             </v-flex>
                             <v-flex xs12>
                                 <p style="color:rgba(255,255,255,0.7)">放送时间</p>
-                                <v-time-picker color="blue" format="24hr" full-width landscape v-model="edit.time"></v-time-picker>
+                                <v-menu
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    full-width
+                                    lazy
+                                    max-width="290px"
+                                    min-width="290px"
+                                    offset-y
+                                    transition="scale-transition"
+                                    v-model="timePicker"
+                                >
+                                    <template v-slot:activator="{ on }">
+                                        <v-text-field label="放送时间" prepend-icon="access_time" clearable readonly v-model="edit.time" v-on="on"></v-text-field>
+                                    </template>
+                                    <v-time-picker full-width v-if="timePicker" v-model="edit.time"></v-time-picker>
+                                </v-menu>
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -105,6 +120,7 @@ export default {
         dateText: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'],
         dialog: false,
         editing: false,
+        timePicker: false,
         edit: {
             name: '',
             sub: '',

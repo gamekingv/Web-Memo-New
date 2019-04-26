@@ -43,8 +43,12 @@
                                 <v-text-field label="字段2" v-model="edit.field2"></v-text-field>
                             </v-flex>
                             <v-flex xs12>
-                                <p style="color:rgba(255,255,255,0.7)">时间</p>
-                                <v-date-picker color="blue" v-model="edit.time"></v-date-picker>
+                                <v-menu :close-on-content-click="false" full-width max-width="290" v-model="datePicker">
+                                    <template v-slot:activator="{ on }">
+                                        <v-text-field :value="edit.time" clearable label="时间" prepend-icon="calendar_today" readonly v-on="on"></v-text-field>
+                                    </template>
+                                    <v-date-picker @change="datePicker = false" v-model="edit.time"></v-date-picker>
+                                </v-menu>
                             </v-flex>
                         </v-layout>
                     </v-container>
@@ -80,6 +84,7 @@ export default {
         },
         dialog: false,
         editing: false,
+        datePicker: false,
         edit: {
             field1: '',
             field2: '',
@@ -89,7 +94,7 @@ export default {
         items: [],
     }),
     async created() {
-        let { [`day${this.day}`]: items } = await storage.get(`day${this.day}`);
+        let { [this.type]: items } = await storage.get(this.type);
         if (items) this.items = items;
     },
     methods: {
