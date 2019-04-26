@@ -11,7 +11,15 @@
             <drag-list :changeHandler="saveList" :list="items" group="anime">
                 <v-list-tile @click.stop avatar slot-scope="{ hover, item }">
                     <v-list-tile-content>
-                        <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+                        <v-list-tile-title>
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                    <v-icon small style="vertical-align:middle" v-on="on">error_outline</v-icon>
+                                </template>
+                                <span>{{item.remark}}</span>
+                            </v-tooltip>
+                            {{ item.name }}
+                        </v-list-tile-title>
                         <v-list-tile-sub-title>{{ item.sub }}</v-list-tile-sub-title>
                         <v-list-tile-sub-title :class="isToday ? 'teal--text' : ''">{{ `第 ${item.num} 话${item.total ? `（共 ${item.total} 话）` : ''}` }}</v-list-tile-sub-title>
                     </v-list-tile-content>
@@ -46,8 +54,11 @@
                             <v-flex xs12>
                                 <v-text-field label="剧名" v-model="edit.name"></v-text-field>
                             </v-flex>
-                            <v-flex xs12>
+                            <v-flex xs6>
                                 <v-text-field label="字幕来源" v-model="edit.sub"></v-text-field>
+                            </v-flex>
+                            <v-flex xs6>
+                                <v-text-field label="备注" v-model="edit.remark"></v-text-field>
                             </v-flex>
                             <v-flex xs6>
                                 <v-text-field label="当前话数" v-model="edit.num"></v-text-field>
@@ -90,10 +101,6 @@ export default {
             return new Date().getDay() % 7 === this.day;
         },
     },
-    created() {
-        let { [`day${this.day}`]: items } = storage.get(`day${this.day}`);
-        if (items) this.items = items;
-    },
     data: () => ({
         dateText: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'],
         dialog: false,
@@ -104,10 +111,15 @@ export default {
             num: '',
             total: '',
             time: '',
+            remark: '',
             id: 0
         },
         items: []
     }),
+    async created() {
+        let { [`day${this.day}`]: items } = await storage.get(`day${this.day}`);
+        if (items) this.items = items;
+    },
     methods: {
         editItem(item) {
             this.editing = true;
@@ -145,6 +157,7 @@ export default {
                 num: '',
                 total: '',
                 time: '',
+                remark: '',
                 id: 0
             };
         },

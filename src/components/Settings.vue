@@ -1,5 +1,10 @@
 <template>
     <v-layout class="px-5" column>
+        <v-layout class="my-4">
+            <v-btn @click.native="$refs.selectFile.click()" color="blue">导入配置</v-btn>
+            <input @change="importConfig" accept="application/json" ref="selectFile" type="file" v-show="false">
+            <v-btn @click="exportConfig">导出配置</v-btn>
+        </v-layout>
         <v-layout class="mb-4">
             <v-flex align-self-center xs2>
                 <v-subheader>自动同步</v-subheader>
@@ -105,7 +110,31 @@ export default {
                 token: this.token,
             };
             await storage.set('synchronization', synchronization);
-        }
+        },
+        async exportConfig() {
+            let a = document.createElement('a');
+            a.download = 'memo.json';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            let file = new Blob([JSON.stringify(await storage.get())], { type: 'application/json' });
+            a.href = URL.createObjectURL(file);
+            a.click();
+            document.body.removeChild(a);
+        },
+        importConfig(e) {
+            let reader = new FileReader();
+            reader.addEventListener('loadend', async event => {
+                try {
+                    let configs = JSON.parse(event.target.result);
+                    for (let key in configs) {
+                        await storage.set(key, configs[key]);
+                    }
+                    window.location.reload();
+                }
+                catch (e) { throw e; }
+            });
+            reader.readAsText(e.target.files[0]);
+        },
     }
 };
 </script>

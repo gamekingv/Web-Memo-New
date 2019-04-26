@@ -23,6 +23,17 @@
                 <settings :last="last" :synchronizing="synchronizing" @autoSync="autoSync" @stopSync="stopSync" @synchronize="synchronize"/>
             </v-tab-item>
         </v-tabs-items>
+        <v-dialog :width="500" content-class="grey darken-4" v-model="newConfigAlert">
+            <v-card class="grey darken-4">
+                <v-card-text class="my-4">{{'检测到github有更新的配置，是否替换本地配置？（选择“否”将强制同步配置到github，如果不想这样做请选择“取消”）'}}</v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="replaceLocalConfig" color="blue">是</v-btn>
+                    <v-btn @click="forceSynchronizing" color="secondary">否</v-btn>
+                    <v-btn @click="cancelSynchronizing" color="blue" outline>取消</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-app>
 </template>
 
@@ -52,7 +63,10 @@ export default {
             success: false,
             message: ''
         },
-        synchronizing: false
+        config: {},
+        loading: false,
+        synchronizing: false,
+        newConfigAlert: false
     }),
     methods: {
         async synchronize(isForced = false) {
@@ -70,6 +84,30 @@ export default {
         },
         stopSync() {
             sync.stopSync();
+        },
+        newConfigDetected(config) {
+            this.newConfigAlert = true;
+            this.config = config;
+        },
+        async replaceLocalConfig() {
+            this.newConfigAlert = false;
+            if (this.config.last) {
+                [this.config.last.time, this.config.last.successTime] = Array(2).fill(Date.now());
+            }
+            for (let key in this.config) {
+                await storage.set(key, this.config[key]);
+            }
+            window.location.reload();
+        },
+        async forceSynchronizing() {
+            this.newConfigAlert = false;
+            this.config = {};
+            await this.synchronize(true);
+            await this.updateLast();
+        },
+        cancelSynchronizing() {
+            this.newConfigAlert = false;
+            this.config = {};
         }
     }
 };

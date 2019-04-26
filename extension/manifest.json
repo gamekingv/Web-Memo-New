@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Web Memo",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "description": "网页备忘",
     "icons": {
         "64": "dist/memo.png"

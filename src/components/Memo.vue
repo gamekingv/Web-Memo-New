@@ -71,10 +71,6 @@ export default {
     components: {
         dragList
     },
-    created() {
-        let { [`day${this.day}`]: items } = storage.get(`day${this.day}`);
-        if (items) this.items = items;
-    },
     data: () => ({
         headerText: {
             song: '歌曲',
@@ -92,6 +88,10 @@ export default {
         },
         items: [],
     }),
+    async created() {
+        let { [`day${this.day}`]: items } = await storage.get(`day${this.day}`);
+        if (items) this.items = items;
+    },
     methods: {
         editItem(item) {
             this.editing = true;

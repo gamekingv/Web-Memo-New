@@ -67,7 +67,7 @@ const sync = {
             if (response.result === 'ok') {
                 let dateString = JSON.parse(response.data).commit.message,
                     remoteSuccessTime = parseInt(dateString.match(/\((.*)\)/)[1]);
-                if (isForced || (config.last && config.last.time >= remoteSuccessTime)) {
+                if (isForced || (config.last && config.last.successTime >= remoteSuccessTime)) {
                     let { sha } = JSON.parse(data);
                     body.sha = sha;
                 }
@@ -78,7 +78,7 @@ const sync = {
                     });
                     if (newConfigResponse.result === 'ok') {
                         let newConfig = JSON.parse(decodeURIComponent(newConfigResponse.data));
-                        // message.sendBackgroundDetectNewConfig(newConfig);
+                        app.newConfigDetected(newConfig);
                         return;
                     }
                     else {
