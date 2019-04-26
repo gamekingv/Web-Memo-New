@@ -14,7 +14,7 @@
                         <v-list-tile-title>
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
-                                    <v-icon v-if="item.remark" small style="vertical-align:middle" v-on="on">error_outline</v-icon>
+                                    <v-icon small style="vertical-align:middle" v-if="item.remark" v-on="on">error_outline</v-icon>
                                 </template>
                                 <span>{{item.remark}}</span>
                             </v-tooltip>
