@@ -67,7 +67,6 @@
                                 <v-text-field label="总话数" v-model="edit.total"></v-text-field>
                             </v-flex>
                             <v-flex xs12>
-                                <p style="color:rgba(255,255,255,0.7)">放送时间</p>
                                 <v-menu
                                     :close-on-content-click="false"
                                     :nudge-right="40"
@@ -80,7 +79,7 @@
                                     v-model="timePicker"
                                 >
                                     <template v-slot:activator="{ on }">
-                                        <v-text-field label="放送时间" prepend-icon="access_time" clearable readonly v-model="edit.time" v-on="on"></v-text-field>
+                                        <v-text-field clearable label="放送时间" prepend-icon="access_time" readonly v-model="edit.time" v-on="on"></v-text-field>
                                     </template>
                                     <v-time-picker full-width v-if="timePicker" v-model="edit.time"></v-time-picker>
                                 </v-menu>
