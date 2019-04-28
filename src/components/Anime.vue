@@ -112,7 +112,7 @@ export default {
     },
     computed: {
         isToday() {
-            return new Date().getDay() % 7 === this.day;
+            return this.day % 7 === new Date().getDay();
         },
     },
     data: () => ({
