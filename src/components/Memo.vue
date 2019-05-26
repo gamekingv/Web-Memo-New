@@ -47,7 +47,7 @@
                                     <template v-slot:activator="{ on }">
                                         <v-text-field :value="edit.time" clearable label="时间" prepend-icon="calendar_today" readonly v-on="on"></v-text-field>
                                     </template>
-                                    <v-date-picker @change="datePicker = false" v-model="edit.time"></v-date-picker>
+                                    <v-date-picker @change="datePicker = false" locale="zh-cn" v-model="edit.time"></v-date-picker>
                                 </v-menu>
                             </v-flex>
                         </v-layout>
