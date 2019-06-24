@@ -45,9 +45,17 @@
                             <v-flex xs12>
                                 <v-menu :close-on-content-click="false" full-width max-width="290" v-model="datePicker">
                                     <template v-slot:activator="{ on }">
-                                        <v-text-field :value="edit.time" clearable label="时间" prepend-icon="calendar_today" readonly v-on="on"></v-text-field>
+                                        <v-text-field
+                                            :value="edit.time"
+                                            @click:clear="edit.time = ''"
+                                            clearable
+                                            label="时间"
+                                            prepend-icon="calendar_today"
+                                            readonly
+                                            v-on="on"
+                                        ></v-text-field>
                                     </template>
-                                    <v-date-picker @change="datePicker = false" locale="zh-cn" v-model="edit.time"></v-date-picker>
+                                    <v-date-picker :day-format="dayFormat" @change="datePicker = false" locale="zh-cn" v-model="edit.time"></v-date-picker>
                                 </v-menu>
                             </v-flex>
                         </v-layout>
@@ -137,6 +145,9 @@ export default {
         },
         saveList() {
             storage.set(this.type, this.items);
+        },
+        dayFormat(e) {
+            return e.replace(/\d+-\d+-0*(\d+)/, '$1');
         }
     }
 };
