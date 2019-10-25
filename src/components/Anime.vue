@@ -9,9 +9,9 @@
         </v-toolbar>
         <v-list two-line>
             <drag-list :changeHandler="saveList" :list="items" group="anime">
-                <v-list-tile @click.stop avatar slot-scope="{ hover, item }">
+                <v-list-tile :class="isOutOfDate(item.time, item.lastUpdate) ? 'out-of-date' : ''" @click.stop avatar slot-scope="{ hover, item }">
                     <v-list-tile-content>
-                        <v-list-tile-title>
+                        <v-list-tile-title :class="isOutOfDate(item.time, item.lastUpdate) ? 'teal--text' : ''">
                             <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                     <v-icon small style="vertical-align:middle" v-if="item.remark" v-on="on">error_outline</v-icon>
@@ -21,7 +21,7 @@
                             {{ item.name }}
                         </v-list-tile-title>
                         <v-list-tile-sub-title>{{ item.sub }}</v-list-tile-sub-title>
-                        <v-list-tile-sub-title :class="isToday ? 'teal--text' : ''">{{ `第 ${item.num} 话${item.total ? `（共 ${item.total} 话）` : ''}` }}</v-list-tile-sub-title>
+                        <v-list-tile-sub-title>{{ `第 ${item.num} 话${item.total ? `（共 ${item.total} 话）` : ''}` }}</v-list-tile-sub-title>
                     </v-list-tile-content>
                     <v-list-tile-action>
                         <v-list-tile-action-text>{{ item.time }}</v-list-tile-action-text>
@@ -137,11 +137,17 @@ export default {
         if (items) this.items = items;
     },
     methods: {
-        isOutOfDate(item) {
+        isOutOfDate(time, lastUpdate) {
+            if (!time) time = '00:00';
             let today = new Date(),
                 day = today.getDay(),
-                [min, sec] = item.time.split(':'),
-                onAir = new Date(today.getYear(), today.getMonth(), today.getDate() + (this.day - 1 - day), min, sec).getTime();
+                [min, sec] = time.split(':'),
+                onAir = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (this.day % 7 - day), min, sec);
+            if (onAir.getTime() > today.getTime()) {
+                onAir.setDate(today.getDate() - 7);
+            }
+            console.log(1);
+            return onAir.getTime() > (lastUpdate ? lastUpdate : 0);
         },
         editItem(item) {
             this.editing = true;
@@ -190,3 +196,9 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.out-of-date {
+    background-color: rgba(0, 150, 136, 0.12);
+}
+</style>

@@ -2,7 +2,7 @@
     <drag-item :animation="100" :group="group" :list="list" @change="changeHandler" filter=".no-drag">
         <div :key="item.id" v-for="(item, index) in list">
             <v-hover>
-                <slot :hover="hover" :item="item" slot-scope="{hover}"/>
+                <slot :hover="hover" :item="item" slot-scope="{hover}" />
             </v-hover>
             <v-divider :key="index" v-if="index + 1 < list.length"></v-divider>
         </div>
