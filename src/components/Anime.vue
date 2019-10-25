@@ -27,10 +27,10 @@
                         <v-list-tile-action-text>{{ item.time }}</v-list-tile-action-text>
                         <v-fade-transition>
                             <div v-show="hover">
-                                <v-btn @click.stop="item.num--; saveList()" class="ma-0 no-drag" icon small>
+                                <v-btn @click.stop="item.num--; item.lastUpdate = Date.now(); saveList()" class="ma-0 no-drag" icon small>
                                     <v-icon small>remove</v-icon>
                                 </v-btn>
-                                <v-btn @click.stop="item.num++; saveList()" class="ma-0 no-drag" icon small>
+                                <v-btn @click.stop="item.num++; item.lastUpdate = Date.now(); saveList()" class="ma-0 no-drag" icon small>
                                     <v-icon small>add</v-icon>
                                 </v-btn>
                                 <v-btn @click.stop="editItem(item)" class="ma-0 no-drag" icon small>
@@ -127,7 +127,8 @@ export default {
             total: '',
             time: '',
             remark: '',
-            id: 0
+            id: 0,
+            lastUpdate: 0
         },
         items: []
     }),
@@ -136,6 +137,12 @@ export default {
         if (items) this.items = items;
     },
     methods: {
+        isOutOfDate(item) {
+            let today = new Date(),
+                day = today.getDay(),
+                [min, sec] = item.time.split(':'),
+                onAir = new Date(today.getYear(), today.getMonth(), today.getDate() + (this.day - 1 - day), min, sec).getTime();
+        },
         editItem(item) {
             this.editing = true;
             this.dialog = true;
@@ -145,6 +152,7 @@ export default {
         },
         saveEdit() {
             this.dialog = false;
+            this.edit.lastUpdate = Date.now();
             if (this.editing) {
                 let note = this.items[this.items.findIndex(n => n.id == this.edit.id)];
                 for (let noteItem in this.edit)
