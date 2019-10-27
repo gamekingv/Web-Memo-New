@@ -144,9 +144,8 @@ export default {
                 [min, sec] = time.split(':'),
                 onAir = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (this.day % 7 - day), min, sec);
             if (onAir.getTime() > today.getTime()) {
-                onAir.setDate(today.getDate() - 7);
+                onAir.setDate(onAir.getDate() - 7);
             }
-            console.log(1);
             return onAir.getTime() > (lastUpdate ? lastUpdate : 0);
         },
         editItem(item) {
