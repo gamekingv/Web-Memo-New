@@ -5,7 +5,7 @@
 yarn
 ```
 
-### 启动vue-cli图形化界面
+## 启动vue-cli图形化界面
 ```
 vue ui
 ```
