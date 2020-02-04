@@ -1,29 +1,11 @@
 # web-memo
 
-## Project setup
+## 安装依赖
 ```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn run serve
+yarn
 ```
 
-### Compiles and minifies for production
+### 启动vue-cli图形化界面
 ```
-yarn run build
+vue ui
 ```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
