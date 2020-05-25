@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill';
+
 const storage = {
     get(key) {
         return browser.storage.local.get(key);
